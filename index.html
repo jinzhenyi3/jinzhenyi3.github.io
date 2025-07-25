@@ -268,8 +268,10 @@
                 
                 <div class="file-input-wrapper">
                     <div class="file-input-button">选择存档文件</div>
-                    <input type="file" id="saveFile" accept=".json" multiple>
+                    <input type="file" id="saveFile" accept="*" multiple>
                 </div>
+                
+                <p><small>提示：可以同时选择主存档和_old存档两个文件</small></p>
                 
                 <div id="fileInfo" class="file-list"></div>
             </div>
@@ -307,6 +309,8 @@
                     <button id="downloadMainBtn">下载主存档</button>
                     <button id="downloadOldBtn">下载_old存档</button>
                 </div>
+                
+                <p><small>注意：下载的文件名将保持与原文件一致</small></p>
             </div>
             
             <div id="status"></div>
@@ -325,6 +329,7 @@
         let oldSaveData = null;
         let mainFileName = '';
         let oldFileName = '';
+        let fileUploadOrder = []; // 记录文件上传顺序
         
         // 密码验证
         document.getElementById('submitPassword').addEventListener('click', function() {
@@ -354,6 +359,7 @@
             if (files.length < 1) return;
             
             document.getElementById('fileInfo').innerHTML = '';
+            fileUploadOrder = [];
             
             // 重置状态
             mainSaveData = null;
@@ -365,6 +371,7 @@
             let filesProcessed = 0;
             const totalFiles = files.length;
             
+            // 首先收集所有文件信息
             for (let i = 0; i < files.length; i++) {
                 const file = files[i];
                 const reader = new FileReader();
@@ -372,39 +379,22 @@
                 reader.onload = function(e) {
                     try {
                         const data = JSON.parse(e.target.result);
-                        
-                        if (file.name.includes('_old')) {
-                            oldSaveData = data;
-                            oldFileName = file.name;
-                            document.getElementById('fileInfo').innerHTML += 
-                                `<div class="file-item">已加载_old存档: ${file.name}</div>`;
-                        } else {
-                            mainSaveData = data;
-                            mainFileName = file.name;
-                            document.getElementById('fileInfo').innerHTML += 
-                                `<div class="file-item">已加载主存档: ${file.name}</div>`;
-                        }
+                        fileUploadOrder.push({
+                            name: file.name,
+                            data: data,
+                            size: file.size
+                        });
                         
                         filesProcessed++;
                         
                         // 检查是否所有文件都已处理
                         if (filesProcessed === totalFiles) {
-                            if (mainSaveData) {
-                                populateForm();
-                                document.getElementById('editSection').style.display = 'block';
-                                
-                                if (!oldSaveData) {
-                                    showStatus('已加载主存档。建议同时上传_old存档以确保兼容性。', 'info');
-                                } else {
-                                    showStatus('两个存档文件已成功加载。', 'success');
-                                }
-                            } else {
-                                showStatus('错误: 未找到有效的主存档文件。', 'error');
-                            }
+                            processUploadedFiles();
                         }
                     } catch (err) {
-                        showStatus(`错误: 无法解析文件 ${file.name}。请确保选择的是正确的JSON存档文件。`, 'error');
+                        showStatus(`错误: 无法解析文件 ${file.name}。请确保选择的是正确的存档文件。`, 'error');
                         console.error(err);
+                        filesProcessed++;
                     }
                 };
                 
@@ -416,6 +406,54 @@
                 reader.readAsText(file);
             }
         });
+        
+        // 处理已上传的文件
+        function processUploadedFiles() {
+            // 按文件大小排序，通常_old存档稍大
+            fileUploadOrder.sort((a, b) => b.size - a.size);
+            
+            // 尝试自动识别文件类型
+            let mainFound = false;
+            
+            for (const file of fileUploadOrder) {
+                if (!mainFound) {
+                    // 第一个文件作为主存档
+                    mainSaveData = file.data;
+                    mainFileName = file.name;
+                    document.getElementById('fileInfo').innerHTML += 
+                        `<div class="file-item">已加载主存档: ${file.name} (${formatFileSize(file.size)})</div>`;
+                    mainFound = true;
+                } else {
+                    // 后续文件作为_old存档
+                    oldSaveData = file.data;
+                    oldFileName = file.name;
+                    document.getElementById('fileInfo').innerHTML += 
+                        `<div class="file-item">已加载_old存档: ${file.name} (${formatFileSize(file.size)})</div>`;
+                }
+            }
+            
+            if (mainSaveData) {
+                populateForm();
+                document.getElementById('editSection').style.display = 'block';
+                
+                if (!oldSaveData) {
+                    showStatus('已加载主存档。建议同时上传_old存档以确保兼容性。', 'info');
+                } else {
+                    showStatus('两个存档文件已成功加载。', 'success');
+                }
+            } else {
+                showStatus('错误: 未找到有效的主存档文件。', 'error');
+            }
+        }
+        
+        // 格式化文件大小
+        function formatFileSize(bytes) {
+            if (bytes === 0) return '0 Bytes';
+            const k = 1024;
+            const sizes = ['Bytes', 'KB', 'MB', 'GB'];
+            const i = Math.floor(Math.log(bytes) / Math.log(k));
+            return parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + ' ' + sizes[i];
+        }
         
         // 填充表单数据
         function populateForm() {
@@ -482,7 +520,7 @@
                 return;
             }
             
-            downloadFile(mainSaveData, mainFileName || 'stardew_valley_save.json');
+            downloadFile(mainSaveData, mainFileName || 'stardew_valley_save');
             showStatus('主存档已下载！请记得也要下载_old存档。', 'info');
         });
         
@@ -493,26 +531,34 @@
                 return;
             }
             
-            downloadFile(oldSaveData, oldFileName || 'stardew_valley_save_old.json');
+            const oldName = oldFileName || (mainFileName ? mainFileName + '_old' : 'stardew_valley_save_old');
+            downloadFile(oldSaveData, oldName);
             showStatus('_old存档已下载！请记得也要下载主存档。', 'info');
         });
         
         // 通用下载函数
         function downloadFile(data, filename) {
             try {
+                // 确保文件名没有非法字符
+                filename = filename.replace(/[^a-zA-Z0-9_\-.]/g, '_');
+                
+                // 如果文件名没有扩展名，则不添加
+                const hasExtension = filename.includes('.');
+                const fullFilename = hasExtension ? filename : filename + '.json';
+                
                 const dataStr = JSON.stringify(data, null, 2);
                 const blob = new Blob([dataStr], { type: 'application/json' });
                 
                 // 兼容iOS设备
                 if (window.navigator && window.navigator.msSaveOrOpenBlob) {
                     // IE/Edge
-                    window.navigator.msSaveOrOpenBlob(blob, filename);
+                    window.navigator.msSaveOrOpenBlob(blob, fullFilename);
                 } else {
                     // 其他浏览器
                     const url = URL.createObjectURL(blob);
                     const a = document.createElement('a');
                     a.href = url;
-                    a.download = filename;
+                    a.download = fullFilename;
                     document.body.appendChild(a);
                     a.click();
                     
