@@ -1,0 +1,543 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>星露谷物语存档修改器</title>
+    <style>
+        :root {
+            --primary-color: #2d5a27;
+            --primary-light: #4a752c;
+            --primary-dark: #1e3f1a;
+            --text-color: #333;
+            --bg-color: #f5f5f7;
+            --card-bg: #ffffff;
+            --border-color: #e5e5e7;
+            --success-bg: #d4edda;
+            --success-text: #155724;
+            --error-bg: #f8d7da;
+            --error-text: #721c24;
+            --info-bg: #e7f5fe;
+            --info-text: #0c5460;
+        }
+        
+        * {
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            -webkit-tap-highlight-color: transparent;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+        
+        .header {
+            background-color: var(--primary-color);
+            color: white;
+            padding: 20px 15px;
+            text-align: center;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+        }
+        
+        h1 {
+            margin: 0;
+            font-size: 22px;
+        }
+        
+        .container {
+            max-width: 800px;
+            margin: 20px auto;
+            padding: 0 15px;
+            flex: 1;
+            width: 100%;
+        }
+        
+        .card {
+            background-color: var(--card-bg);
+            border-radius: 12px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+            overflow: hidden;
+            margin-bottom: 20px;
+        }
+        
+        .section {
+            padding: 20px;
+            border-bottom: 1px solid var(--border-color);
+        }
+        
+        .section:last-child {
+            border-bottom: none;
+        }
+        
+        h2 {
+            color: var(--primary-color);
+            margin-top: 0;
+            font-size: 18px;
+        }
+        
+        h3 {
+            color: var(--primary-light);
+            margin: 15px 0 10px;
+            font-size: 16px;
+        }
+        
+        label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 600;
+            font-size: 15px;
+        }
+        
+        input[type="number"], 
+        input[type="text"],
+        input[type="password"] {
+            width: 100%;
+            padding: 12px;
+            margin-bottom: 15px;
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            font-size: 16px;
+            -webkit-appearance: none;
+        }
+        
+        .file-input-wrapper {
+            position: relative;
+            margin-bottom: 15px;
+        }
+        
+        .file-input-button {
+            display: block;
+            width: 100%;
+            background-color: var(--primary-light);
+            color: white;
+            border: none;
+            padding: 14px;
+            border-radius: 8px;
+            font-size: 16px;
+            font-weight: 500;
+            text-align: center;
+            cursor: pointer;
+            transition: background-color 0.2s;
+        }
+        
+        .file-input-button:hover {
+            background-color: var(--primary-dark);
+        }
+        
+        #saveFile {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            top: 0;
+            left: 0;
+            opacity: 0;
+            cursor: pointer;
+        }
+        
+        button {
+            background-color: var(--primary-light);
+            color: white;
+            border: none;
+            padding: 14px;
+            border-radius: 8px;
+            font-size: 16px;
+            font-weight: 500;
+            width: 100%;
+            margin-bottom: 10px;
+            cursor: pointer;
+            transition: background-color 0.2s;
+        }
+        
+        button:hover {
+            background-color: var(--primary-dark);
+        }
+        
+        button:disabled {
+            background-color: #a8a8ad;
+            cursor: not-allowed;
+        }
+        
+        #status {
+            margin-top: 15px;
+            padding: 12px;
+            border-radius: 8px;
+            font-size: 14px;
+            display: none;
+        }
+        
+        .success {
+            background-color: var(--success-bg);
+            color: var(--success-text);
+        }
+        
+        .error {
+            background-color: var(--error-bg);
+            color: var(--error-text);
+        }
+        
+        .info {
+            background-color: var(--info-bg);
+            color: var(--info-text);
+        }
+        
+        .file-list {
+            margin-top: 15px;
+        }
+        
+        .file-item {
+            padding: 12px;
+            background-color: #f8f8f8;
+            border-radius: 8px;
+            margin-bottom: 8px;
+            font-size: 14px;
+            word-break: break-all;
+        }
+        
+        .button-group {
+            display: flex;
+            gap: 10px;
+        }
+        
+        .button-group button {
+            flex: 1;
+        }
+        
+        .password-container {
+            max-width: 400px;
+            margin: 50px auto;
+            padding: 20px;
+            background-color: var(--card-bg);
+            border-radius: 12px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        
+        .password-container h2 {
+            text-align: center;
+            margin-bottom: 20px;
+        }
+        
+        .footer {
+            text-align: center;
+            padding: 15px;
+            color: #666;
+            font-size: 14px;
+            margin-top: auto;
+        }
+        
+        @media (max-width: 600px) {
+            .container {
+                padding: 0 10px;
+            }
+            
+            .section {
+                padding: 15px;
+            }
+            
+            .button-group {
+                flex-direction: column;
+                gap: 8px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <h1>星露谷物语存档修改器</h1>
+    </div>
+    
+    <div id="passwordSection" class="container">
+        <div class="password-container">
+            <h2>请输入访问密码</h2>
+            <input type="password" id="passwordInput" placeholder="输入密码">
+            <button id="submitPassword">进入修改器</button>
+            <div id="passwordStatus" style="display: none; margin-top: 15px;"></div>
+        </div>
+    </div>
+    
+    <div id="appContent" class="container" style="display: none;">
+        <div class="card">
+            <div class="section">
+                <h2>1. 上传存档文件</h2>
+                <p>请选择你的星露谷物语存档文件 (通常位于: C:\Users\[你的用户名]\AppData\Roaming\StardewValley\Saves\)</p>
+                
+                <div class="file-input-wrapper">
+                    <div class="file-input-button">选择存档文件</div>
+                    <input type="file" id="saveFile" accept=".json" multiple>
+                </div>
+                
+                <div id="fileInfo" class="file-list"></div>
+            </div>
+            
+            <div class="section" id="editSection" style="display: none;">
+                <h2>2. 修改存档数据</h2>
+                
+                <h3>玩家信息</h3>
+                <label for="playerName">角色名称:</label>
+                <input type="text" id="playerName">
+                
+                <label for="playerMoney">金钱:</label>
+                <input type="number" id="playerMoney" min="0">
+                
+                <h3>游戏进度</h3>
+                <label for="daysPlayed">已玩天数:</label>
+                <input type="number" id="daysPlayed" min="0">
+                
+                <label for="farmName">农场名称:</label>
+                <input type="text" id="farmName">
+                
+                <h3>物品</h3>
+                <label for="maxItems">最大物品栏位:</label>
+                <input type="number" id="maxItems" min="12" max="48" value="12">
+                
+                <button id="saveChanges">保存修改</button>
+            </div>
+            
+            <div class="section" id="downloadSection" style="display: none;">
+                <h2>3. 下载修改后的存档</h2>
+                <p>修改已完成，请下载存档文件。</p>
+                <p><strong>重要提示:</strong> 需要同时替换主存档和_old存档两个文件。</p>
+                
+                <div class="button-group">
+                    <button id="downloadMainBtn">下载主存档</button>
+                    <button id="downloadOldBtn">下载_old存档</button>
+                </div>
+            </div>
+            
+            <div id="status"></div>
+        </div>
+    </div>
+    
+    <div class="footer">
+        <p>星露谷物语存档修改器 &copy; 2023 | 仅限个人使用</p>
+    </div>
+
+    <script>
+        // 密码设置 - 部署前请修改这个密码
+        const APP_PASSWORD = "enyi1221"; // 你可以改成你想要的密码
+        
+        let mainSaveData = null;
+        let oldSaveData = null;
+        let mainFileName = '';
+        let oldFileName = '';
+        
+        // 密码验证
+        document.getElementById('submitPassword').addEventListener('click', function() {
+            const inputPassword = document.getElementById('passwordInput').value;
+            const passwordStatus = document.getElementById('passwordStatus');
+            
+            if (inputPassword === APP_PASSWORD) {
+                document.getElementById('passwordSection').style.display = 'none';
+                document.getElementById('appContent').style.display = 'block';
+            } else {
+                passwordStatus.textContent = "密码错误，请重试";
+                passwordStatus.className = "error";
+                passwordStatus.style.display = 'block';
+            }
+        });
+        
+        // 回车键提交密码
+        document.getElementById('passwordInput').addEventListener('keypress', function(e) {
+            if (e.key === 'Enter') {
+                document.getElementById('submitPassword').click();
+            }
+        });
+        
+        // 文件上传处理
+        document.getElementById('saveFile').addEventListener('change', function(e) {
+            const files = e.target.files;
+            if (files.length < 1) return;
+            
+            document.getElementById('fileInfo').innerHTML = '';
+            
+            // 重置状态
+            mainSaveData = null;
+            oldSaveData = null;
+            mainFileName = '';
+            oldFileName = '';
+            
+            // 处理上传的文件
+            let filesProcessed = 0;
+            const totalFiles = files.length;
+            
+            for (let i = 0; i < files.length; i++) {
+                const file = files[i];
+                const reader = new FileReader();
+                
+                reader.onload = function(e) {
+                    try {
+                        const data = JSON.parse(e.target.result);
+                        
+                        if (file.name.includes('_old')) {
+                            oldSaveData = data;
+                            oldFileName = file.name;
+                            document.getElementById('fileInfo').innerHTML += 
+                                `<div class="file-item">已加载_old存档: ${file.name}</div>`;
+                        } else {
+                            mainSaveData = data;
+                            mainFileName = file.name;
+                            document.getElementById('fileInfo').innerHTML += 
+                                `<div class="file-item">已加载主存档: ${file.name}</div>`;
+                        }
+                        
+                        filesProcessed++;
+                        
+                        // 检查是否所有文件都已处理
+                        if (filesProcessed === totalFiles) {
+                            if (mainSaveData) {
+                                populateForm();
+                                document.getElementById('editSection').style.display = 'block';
+                                
+                                if (!oldSaveData) {
+                                    showStatus('已加载主存档。建议同时上传_old存档以确保兼容性。', 'info');
+                                } else {
+                                    showStatus('两个存档文件已成功加载。', 'success');
+                                }
+                            } else {
+                                showStatus('错误: 未找到有效的主存档文件。', 'error');
+                            }
+                        }
+                    } catch (err) {
+                        showStatus(`错误: 无法解析文件 ${file.name}。请确保选择的是正确的JSON存档文件。`, 'error');
+                        console.error(err);
+                    }
+                };
+                
+                reader.onerror = function() {
+                    showStatus(`错误: 读取文件 ${file.name} 失败。`, 'error');
+                    filesProcessed++;
+                };
+                
+                reader.readAsText(file);
+            }
+        });
+        
+        // 填充表单数据
+        function populateForm() {
+            if (!mainSaveData) return;
+            
+            // 玩家信息
+            document.getElementById('playerName').value = mainSaveData.player?.name || '';
+            document.getElementById('playerMoney').value = mainSaveData.player?.money || 0;
+            
+            // 游戏进度
+            document.getElementById('daysPlayed').value = mainSaveData.player?.daysPlayed || 0;
+            document.getElementById('farmName').value = mainSaveData.player?.farmName || '';
+            
+            // 物品栏
+            document.getElementById('maxItems').value = mainSaveData.player?.maxItems || 12;
+        }
+        
+        // 保存修改
+        document.getElementById('saveChanges').addEventListener('click', function() {
+            if (!mainSaveData) {
+                showStatus('错误: 没有可用的主存档数据。', 'error');
+                return;
+            }
+            
+            // 更新玩家信息
+            const playerName = document.getElementById('playerName').value;
+            const playerMoney = parseInt(document.getElementById('playerMoney').value) || 0;
+            
+            if (!mainSaveData.player) mainSaveData.player = {};
+            mainSaveData.player.name = playerName;
+            mainSaveData.player.money = playerMoney;
+            
+            // 更新游戏进度
+            const daysPlayed = parseInt(document.getElementById('daysPlayed').value) || 0;
+            const farmName = document.getElementById('farmName').value;
+            
+            mainSaveData.player.daysPlayed = daysPlayed;
+            mainSaveData.player.farmName = farmName;
+            
+            // 更新物品栏
+            mainSaveData.player.maxItems = parseInt(document.getElementById('maxItems').value) || 12;
+            
+            // 如果存在_old存档，也更新相同的信息
+            if (oldSaveData) {
+                if (!oldSaveData.player) oldSaveData.player = {};
+                oldSaveData.player.name = playerName;
+                oldSaveData.player.money = playerMoney;
+                oldSaveData.player.daysPlayed = daysPlayed;
+                oldSaveData.player.farmName = farmName;
+                oldSaveData.player.maxItems = mainSaveData.player.maxItems;
+            }
+            
+            showStatus('修改已保存！请下载存档文件。', 'success');
+            document.getElementById('downloadSection').style.display = 'block';
+            
+            // 滚动到下载部分
+            document.getElementById('downloadSection').scrollIntoView({ behavior: 'smooth' });
+        });
+        
+        // 下载主存档
+        document.getElementById('downloadMainBtn').addEventListener('click', function() {
+            if (!mainSaveData) {
+                showStatus('错误: 没有可用的主存档数据。', 'error');
+                return;
+            }
+            
+            downloadFile(mainSaveData, mainFileName || 'stardew_valley_save.json');
+            showStatus('主存档已下载！请记得也要下载_old存档。', 'info');
+        });
+        
+        // 下载_old存档
+        document.getElementById('downloadOldBtn').addEventListener('click', function() {
+            if (!oldSaveData) {
+                showStatus('错误: 没有可用的_old存档数据。', 'error');
+                return;
+            }
+            
+            downloadFile(oldSaveData, oldFileName || 'stardew_valley_save_old.json');
+            showStatus('_old存档已下载！请记得也要下载主存档。', 'info');
+        });
+        
+        // 通用下载函数
+        function downloadFile(data, filename) {
+            try {
+                const dataStr = JSON.stringify(data, null, 2);
+                const blob = new Blob([dataStr], { type: 'application/json' });
+                
+                // 兼容iOS设备
+                if (window.navigator && window.navigator.msSaveOrOpenBlob) {
+                    // IE/Edge
+                    window.navigator.msSaveOrOpenBlob(blob, filename);
+                } else {
+                    // 其他浏览器
+                    const url = URL.createObjectURL(blob);
+                    const a = document.createElement('a');
+                    a.href = url;
+                    a.download = filename;
+                    document.body.appendChild(a);
+                    a.click();
+                    
+                    // 延迟移除元素以确保下载在移动设备上工作
+                    setTimeout(() => {
+                        document.body.removeChild(a);
+                        URL.revokeObjectURL(url);
+                    }, 100);
+                }
+            } catch (err) {
+                showStatus('下载失败: ' + err.message, 'error');
+                console.error(err);
+            }
+        }
+        
+        // 显示状态消息
+        function showStatus(message, type) {
+            const statusDiv = document.getElementById('status');
+            statusDiv.textContent = message;
+            statusDiv.className = type;
+            statusDiv.style.display = 'block';
+            
+            // 自动滚动到状态消息
+            statusDiv.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+        }
+    </script>
+</body>
+</html>
