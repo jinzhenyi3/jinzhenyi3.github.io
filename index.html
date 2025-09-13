@@ -13,8 +13,8 @@
         }
         
         body {
-            background: linear-gradient(135deg, #f5f5f5 0%, #e0e0e0 100%);
-            color: #333;
+            background: linear-gradient(135deg, #0f0f0f 0%, #2a2a2a 100%);
+            color: #e0e0e0;
             line-height: 1.6;
             padding: 20px;
             min-height: 100vh;
@@ -37,31 +37,33 @@
         h1 {
             font-size: 2.2rem;
             font-weight: 700;
-            color: #222;
+            color: #ffffff;
             margin-bottom: 10px;
+            text-shadow: 0 2px 4px rgba(0,0,0,0.5);
         }
         
         .subtitle {
             font-size: 1rem;
-            color: #666;
+            color: #aaa;
         }
         
         .card {
-            background: #fff;
-            border-radius: 8px;
-            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+            background: #1e1e1e;
+            border-radius: 10px;
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.4);
             padding: 30px;
             transition: transform 0.3s ease, box-shadow 0.3s ease;
+            border: 1px solid #333;
         }
         
         .card:hover {
             transform: translateY(-5px);
-            box-shadow: 0 6px 16px rgba(0, 0, 0, 0.12);
+            box-shadow: 0 12px 25px rgba(0, 0, 0, 0.5);
         }
         
         .btn {
             display: inline-block;
-            background: #222;
+            background: #444;
             color: white;
             padding: 14px 25px;
             border-radius: 6px;
@@ -73,11 +75,14 @@
             text-align: center;
             width: 100%;
             font-size: 1rem;
+            text-transform: uppercase;
+            letter-spacing: 1px;
         }
         
         .btn:hover {
-            background: #000;
+            background: #555;
             transform: translateY(-2px);
+            box-shadow: 0 4px 10px rgba(0,0,0,0.3);
         }
         
         .btn-github {
@@ -95,14 +100,21 @@
         .user-info {
             display: none;
             margin-top: 20px;
+            animation: fadeIn 0.5s ease;
+        }
+        
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
         }
         
         .avatar {
             width: 80px;
             height: 80px;
             border-radius: 50%;
-            border: 3px solid #eee;
+            border: 3px solid #444;
             object-fit: cover;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.3);
         }
         
         .user-details {
@@ -114,12 +126,12 @@
         
         .user-text h3 {
             font-size: 1.4rem;
-            color: #222;
+            color: #fff;
             margin-bottom: 5px;
         }
         
         .user-text p {
-            color: #666;
+            color: #aaa;
         }
         
         .info-grid {
@@ -131,21 +143,27 @@
         
         .info-item {
             padding: 12px;
-            background-color: #f9f9f9;
+            background-color: #2a2a2a;
             border-radius: 6px;
-            border-left: 3px solid #333;
+            border-left: 3px solid #444;
+            transition: transform 0.2s ease;
+        }
+        
+        .info-item:hover {
+            transform: translateY(-2px);
+            background-color: #333;
         }
         
         .label {
             font-weight: 600;
-            color: #444;
+            color: #bbb;
             display: block;
             margin-bottom: 5px;
             font-size: 0.9rem;
         }
         
         .value {
-            color: #222;
+            color: #fff;
             font-weight: 500;
         }
         
@@ -159,26 +177,27 @@
             font-size: 0.9rem;
             margin-top: 20px;
             display: none;
+            border: 1px solid #444;
         }
         
         .error {
-            color: #d32f2f;
-            background-color: #ffebee;
+            color: #ff5252;
+            background-color: rgba(255, 82, 82, 0.1);
             padding: 12px;
             border-radius: 6px;
             margin: 15px 0;
             display: none;
-            border-left: 3px solid #d32f2f;
+            border-left: 3px solid #ff5252;
         }
         
         .success {
-            color: #388e3c;
-            background-color: #e8f5e9;
+            color: #4caf50;
+            background-color: rgba(76, 175, 80, 0.1);
             padding: 12px;
             border-radius: 6px;
             margin: 15px 0;
             display: none;
-            border-left: 3px solid #388e3c;
+            border-left: 3px solid #4caf50;
         }
         
         .actions {
@@ -197,43 +216,71 @@
         }
         
         .json-toggle:hover {
-            background: #2c2c2c;
+            background: #555;
         }
         
         .logo {
             font-weight: 800;
-            letter-spacing: 1px;
-            color: #222;
+            letter-spacing: 2px;
+            color: #fff;
             margin-bottom: 10px;
-            font-size: 1.2rem;
+            font-size: 1.5rem;
+            text-transform: uppercase;
         }
         
         .api-info {
             margin-top: 20px;
             padding-top: 15px;
-            border-top: 1px solid #eee;
+            border-top: 1px solid #333;
             font-size: 0.9rem;
-            color: #666;
+            color: #777;
+            text-align: center;
+        }
+        
+        .loading {
+            display: none;
+            text-align: center;
+            margin: 20px 0;
+        }
+        
+        .loading-spinner {
+            border: 3px solid #333;
+            border-top: 3px solid #fff;
+            border-radius: 50%;
+            width: 30px;
+            height: 30px;
+            animation: spin 1s linear infinite;
+            margin: 0 auto;
+        }
+        
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
         }
     </style>
 </head>
 <body>
     <div class="container">
         <header>
-            <div class="logo">GITHUB SSO</div>
+            <div class="logo">GitHub SSO</div>
             <h1>GitHub单点登录</h1>
             <p class="subtitle">通过GitHub OAuth登录获取您的个人信息</p>
         </header>
         
         <div class="card">
             <div id="login-section">
-                <p>点击下方按钮通过GitHub登录：</p>
+                <p style="margin-bottom: 20px; color: #bbb;">点击下方按钮通过GitHub登录：</p>
                 <button class="btn btn-github" id="login-btn">
                     <svg width="16" height="16" viewBox="0 0 16 16" fill="currentColor">
                         <path d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.013 8.013 0 0016 8c0-4.42-3.58-8-8-8z"/>
                     </svg>
                     通过GitHub登录
                 </button>
+            </div>
+            
+            <div class="loading" id="loading">
+                <div class="loading-spinner"></div>
+                <p style="margin-top: 10px;">正在处理，请稍候...</p>
             </div>
             
             <div id="error-message" class="error"></div>
@@ -261,6 +308,10 @@
                         <span class="label">GitHub主页：</span>
                         <a id="profile-url" target="_blank" class="value">访问</a>
                     </div>
+                    <div class="info-item">
+                        <span class="label">加入日期：</span>
+                        <span id="created-at" class="value"></span>
+                    </div>
                 </div>
                 
                 <div class="actions">
@@ -278,8 +329,8 @@
     </div>
 
     <script>
-        // 硬编码的API配置 - 在实际使用中替换为您的Cloudflare Worker URL
-        const WORKER_URL = "http://dl.jzycloud.dpdns.org";
+        // 硬编码的API配置 - 替换为您的Cloudflare Worker URL
+        const WORKER_URL = "http://dl.jzycloud.dpdns.org/";
         
         // 登录按钮点击事件
         document.getElementById('login-btn').addEventListener('click', function() {
@@ -298,7 +349,8 @@
                     account_age_days: parseInt(document.getElementById('account-age').textContent),
                     followers: parseInt(document.getElementById('followers').textContent),
                     avatar_url: document.getElementById('avatar').src,
-                    html_url: document.getElementById('profile-url').href
+                    html_url: document.getElementById('profile-url').href,
+                    created_at: document.getElementById('created-at').textContent
                 };
                 jsonOutput.textContent = JSON.stringify(userData, null, 2);
                 jsonOutput.style.display = 'block';
@@ -340,17 +392,31 @@
             }, 3000);
         }
         
-        // 模拟用户数据
-        function simulateLogin() {
+        // 显示加载状态
+        function showLoading() {
+            document.getElementById('loading').style.display = 'block';
+        }
+        
+        // 隐藏加载状态
+        function hideLoading() {
+            document.getElementById('loading').style.display = 'none';
+        }
+        
+        // 显示用户信息
+        function displayUserInfo(userData) {
             document.getElementById('login-section').style.display = 'none';
             document.getElementById('user-info').style.display = 'block';
             
-            document.getElementById('avatar').src = 'https://avatars.githubusercontent.com/u/583231?v=4';
-            document.getElementById('name').textContent = 'Octocat';
-            document.getElementById('bio').textContent = 'GitHub官方吉祥物';
-            document.getElementById('account-age').textContent = '4250';
-            document.getElementById('followers').textContent = '6584';
-            document.getElementById('profile-url').href = 'https://github.com/octocat';
+            document.getElementById('avatar').src = userData.avatar_url;
+            document.getElementById('name').textContent = userData.name || userData.login;
+            document.getElementById('bio').textContent = userData.bio || '暂无简介';
+            document.getElementById('account-age').textContent = userData.account_age_days;
+            document.getElementById('followers').textContent = userData.followers;
+            document.getElementById('profile-url').href = userData.html_url;
+            document.getElementById('created-at').textContent = new Date(userData.created_at).toLocaleDateString();
+            
+            hideLoading();
+            showSuccess('登录成功！');
         }
         
         // 检查URL中是否有授权码
@@ -358,17 +424,29 @@
         const code = urlParams.get('code');
         
         if (code) {
-            // 显示加载状态
+            showLoading();
             document.getElementById('login-btn').disabled = true;
-            document.getElementById('login-btn').innerHTML = '处理中...';
             
-            // 模拟API调用
-            setTimeout(() => {
-                simulateLogin();
-                
-                // 清除URL中的code参数
-                window.history.replaceState({}, document.title, window.location.pathname);
-            }, 1500);
+            // 发送请求到后端获取用户信息
+            fetch(`${WORKER_URL}/oauth/callback?code=${code}`)
+                .then(response => {
+                    if (!response.ok) {
+                        throw new Error('网络响应不正常: ' + response.status);
+                    }
+                    return response.json();
+                })
+                .then(userData => {
+                    // 显示用户信息
+                    displayUserInfo(userData);
+                    
+                    // 清除URL中的code参数
+                    window.history.replaceState({}, document.title, window.location.pathname);
+                })
+                .catch(error => {
+                    hideLoading();
+                    showError('错误: ' + error.message);
+                    document.getElementById('login-btn').disabled = false;
+                });
         }
     </script>
 </body>
