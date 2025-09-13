@@ -3,329 +3,291 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>GitHub单点登录API</title>
+    <title>GitHub单点登录</title>
     <style>
-        :root {
-            --primary-color: #24292e;
-            --secondary-color: #0366d6;
-            --accent-color: #28a745;
-            --light-color: #f6f8fa;
-            --border-color: #e1e4e8;
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
         }
         
         body {
-            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
-            line-height: 1.6;
+            background: linear-gradient(135deg, #f5f5f5 0%, #e0e0e0 100%);
             color: #333;
-            max-width: 800px;
-            margin: 0 auto;
+            line-height: 1.6;
             padding: 20px;
-            background-color: #fafbfc;
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+        
+        .container {
+            width: 100%;
+            max-width: 500px;
         }
         
         header {
             text-align: center;
-            margin-bottom: 30px;
-            padding-bottom: 20px;
-            border-bottom: 1px solid var(--border-color);
+            padding: 30px 0;
+            margin-bottom: 20px;
         }
         
         h1 {
-            color: var(--primary-color);
+            font-size: 2.2rem;
+            font-weight: 700;
+            color: #222;
+            margin-bottom: 10px;
+        }
+        
+        .subtitle {
+            font-size: 1rem;
+            color: #666;
         }
         
         .card {
-            background: white;
-            border-radius: 6px;
-            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
-            padding: 20px;
-            margin-bottom: 20px;
+            background: #fff;
+            border-radius: 8px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+            padding: 30px;
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+        
+        .card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 6px 16px rgba(0, 0, 0, 0.12);
         }
         
         .btn {
             display: inline-block;
-            background-color: var(--primary-color);
+            background: #222;
             color: white;
-            padding: 10px 20px;
+            padding: 14px 25px;
             border-radius: 6px;
             text-decoration: none;
             font-weight: 500;
             cursor: pointer;
             border: none;
-            transition: background-color 0.2s;
+            transition: all 0.3s ease;
+            text-align: center;
+            width: 100%;
+            font-size: 1rem;
         }
         
         .btn:hover {
-            background-color: #000;
+            background: #000;
+            transform: translateY(-2px);
         }
         
         .btn-github {
-            background-color: var(--accent-color);
+            background: #333;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
         }
         
         .btn-github:hover {
-            background-color: #269f42;
+            background: #000;
         }
         
         .user-info {
             display: none;
+            margin-top: 20px;
         }
         
         .avatar {
-            width: 100px;
-            height: 100px;
+            width: 80px;
+            height: 80px;
             border-radius: 50%;
-            margin-right: 20px;
+            border: 3px solid #eee;
+            object-fit: cover;
         }
         
         .user-details {
             display: flex;
             align-items: center;
             margin-bottom: 20px;
+            gap: 20px;
+        }
+        
+        .user-text h3 {
+            font-size: 1.4rem;
+            color: #222;
+            margin-bottom: 5px;
+        }
+        
+        .user-text p {
+            color: #666;
         }
         
         .info-grid {
             display: grid;
             grid-template-columns: repeat(2, 1fr);
-            gap: 10px;
+            gap: 12px;
+            margin-bottom: 20px;
         }
         
         .info-item {
-            padding: 10px;
-            background-color: var(--light-color);
-            border-radius: 4px;
+            padding: 12px;
+            background-color: #f9f9f9;
+            border-radius: 6px;
+            border-left: 3px solid #333;
         }
         
         .label {
-            font-weight: bold;
-            color: var(--primary-color);
+            font-weight: 600;
+            color: #444;
+            display: block;
+            margin-bottom: 5px;
+            font-size: 0.9rem;
+        }
+        
+        .value {
+            color: #222;
+            font-weight: 500;
         }
         
         .code-block {
-            background-color: #f6f8fa;
-            border: 1px solid var(--border-color);
+            background-color: #2d2d2d;
+            color: #f8f8f2;
             border-radius: 6px;
             padding: 16px;
             overflow-x: auto;
             font-family: 'SFMono-Regular', Consolas, 'Liberation Mono', Menlo, monospace;
-            font-size: 14px;
-        }
-        
-        .step {
-            margin-bottom: 25px;
-        }
-        
-        .step-number {
-            display: inline-block;
-            width: 28px;
-            height: 28px;
-            background-color: var(--secondary-color);
-            color: white;
-            border-radius: 50%;
-            text-align: center;
-            line-height: 28px;
-            margin-right: 10px;
+            font-size: 0.9rem;
+            margin-top: 20px;
+            display: none;
         }
         
         .error {
-            color: #cb2431;
-            background-color: #ffeef0;
-            padding: 10px;
-            border-radius: 4px;
-            margin: 10px 0;
+            color: #d32f2f;
+            background-color: #ffebee;
+            padding: 12px;
+            border-radius: 6px;
+            margin: 15px 0;
+            display: none;
+            border-left: 3px solid #d32f2f;
+        }
+        
+        .success {
+            color: #388e3c;
+            background-color: #e8f5e9;
+            padding: 12px;
+            border-radius: 6px;
+            margin: 15px 0;
+            display: none;
+            border-left: 3px solid #388e3c;
+        }
+        
+        .actions {
+            display: flex;
+            gap: 10px;
+            margin-top: 15px;
+        }
+        
+        .actions .btn {
+            width: auto;
+            flex: 1;
+        }
+        
+        .json-toggle {
+            background: #444;
+        }
+        
+        .json-toggle:hover {
+            background: #2c2c2c;
+        }
+        
+        .logo {
+            font-weight: 800;
+            letter-spacing: 1px;
+            color: #222;
+            margin-bottom: 10px;
+            font-size: 1.2rem;
+        }
+        
+        .api-info {
+            margin-top: 20px;
+            padding-top: 15px;
+            border-top: 1px solid #eee;
+            font-size: 0.9rem;
+            color: #666;
         }
     </style>
 </head>
 <body>
-    <header>
-        <h1>GitHub单点登录API</h1>
-        <p>使用Cloudflare Workers搭建的GitHub OAuth登录API，返回用户JSON数据</p>
-    </header>
-    
-    <div class="card">
-        <h2>演示</h2>
-        <div id="login-section">
-            <p>点击下方按钮通过GitHub登录：</p>
-            <button class="btn btn-github" id="login-btn">通过GitHub登录</button>
-        </div>
+    <div class="container">
+        <header>
+            <div class="logo">GITHUB SSO</div>
+            <h1>GitHub单点登录</h1>
+            <p class="subtitle">通过GitHub OAuth登录获取您的个人信息</p>
+        </header>
         
-        <div id="error-message" class="error" style="display: none;"></div>
-        
-        <div id="user-info" class="user-info">
-            <div class="user-details">
-                <img id="avatar" class="avatar" src="" alt="用户头像">
-                <div>
-                    <h2 id="name"></h2>
-                    <p id="bio"></p>
-                </div>
+        <div class="card">
+            <div id="login-section">
+                <p>点击下方按钮通过GitHub登录：</p>
+                <button class="btn btn-github" id="login-btn">
+                    <svg width="16" height="16" viewBox="0 0 16 16" fill="currentColor">
+                        <path d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.013 8.013 0 0016 8c0-4.42-3.58-8-8-8z"/>
+                    </svg>
+                    通过GitHub登录
+                </button>
             </div>
             
-            <div class="info-grid">
-                <div class="info-item">
-                    <span class="label">注册天数：</span>
-                    <span id="account-age"></span>
+            <div id="error-message" class="error"></div>
+            <div id="success-message" class="success"></div>
+            
+            <div id="user-info" class="user-info">
+                <div class="user-details">
+                    <img id="avatar" class="avatar" src="" alt="用户头像">
+                    <div class="user-text">
+                        <h3 id="name"></h3>
+                        <p id="bio"></p>
+                    </div>
                 </div>
-                <div class="info-item">
-                    <span class="label">粉丝数：</span>
-                    <span id="followers"></span>
+                
+                <div class="info-grid">
+                    <div class="info-item">
+                        <span class="label">注册天数：</span>
+                        <span id="account-age" class="value"></span>
+                    </div>
+                    <div class="info-item">
+                        <span class="label">粉丝数：</span>
+                        <span id="followers" class="value"></span>
+                    </div>
+                    <div class="info-item">
+                        <span class="label">GitHub主页：</span>
+                        <a id="profile-url" target="_blank" class="value">访问</a>
+                    </div>
                 </div>
-                <div class="info-item">
-                    <span class="label">GitHub主页：</span>
-                    <a id="profile-url" target="_blank">访问</a>
+                
+                <div class="actions">
+                    <button class="btn json-toggle" id="show-json">查看JSON数据</button>
+                    <button class="btn" id="logout">退出登录</button>
                 </div>
-                <div class="info-item">
-                    <span class="label">API响应：</span>
-                    <button class="btn" id="show-json">查看JSON</button>
-                </div>
+                
+                <div id="json-output" class="code-block"></div>
             </div>
             
-            <div id="json-output" class="code-block" style="display: none; margin-top: 20px;"></div>
-        </div>
-    </div>
-    
-    <div class="card">
-        <h2>Cloudflare Worker后端代码</h2>
-        
-        <div class="step">
-            <h3><span class="step-number">1</span>创建GitHub OAuth应用</h3>
-            <p>在GitHub开发者设置中创建OAuth应用，获取Client ID和Client Secret。</p>
-            <p>设置授权回调URL为：<code>https://your-worker.your-subdomain.workers.dev/oauth/callback</code></p>
-        </div>
-        
-        <div class="step">
-            <h3><span class="step-number">2</span>Cloudflare Worker代码</h3>
-            <p>将以下代码部署到Cloudflare Workers：</p>
-            <div class="code-block">
-// Cloudflare Worker代码 - GitHub OAuth登录API
-const CLIENT_ID = "你的GitHub客户端ID";
-const CLIENT_SECRET = "你的GitHub客户端密钥";
-const REDIRECT_URI = "https://your-worker.your-subdomain.workers.dev/oauth/callback";
-
-async function handleRequest(request) {
-  const url = new URL(request.url);
-  
-  // 处理OAuth回调
-  if (url.pathname === "/oauth/callback") {
-    const code = url.searchParams.get("code");
-    if (!code) {
-      return new Response("Missing authorization code", { status: 400 });
-    }
-    
-    try {
-      // 交换code获取access token
-      const tokenResponse = await fetch("https://github.com/login/oauth/access_token", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          "Accept": "application/json"
-        },
-        body: JSON.stringify({
-          client_id: CLIENT_ID,
-          client_secret: CLIENT_SECRET,
-          code: code
-        })
-      });
-      
-      const tokenData = await tokenResponse.json();
-      const accessToken = tokenData.access_token;
-      
-      if (!accessToken) {
-        return new Response("Failed to get access token: " + JSON.stringify(tokenData), { status: 400 });
-      }
-      
-      // 使用access token获取用户信息
-      const userResponse = await fetch("https://api.github.com/user", {
-        headers: {
-          "Authorization": `token ${accessToken}`,
-          "User-Agent": "Cloudflare-Workers-Github-OAuth"
-        }
-      });
-      
-      if (!userResponse.ok) {
-        return new Response("Failed to fetch user data: " + await userResponse.text(), { status: 500 });
-      }
-      
-      const userData = await userResponse.json();
-      
-      // 计算注册天数
-      const createdAt = new Date(userData.created_at);
-      const now = new Date();
-      const accountAgeDays = Math.floor((now - createdAt) / (1000 * 60 * 60 * 24));
-      
-      // 构建响应JSON
-      const responseData = {
-        name: userData.name || userData.login,
-        bio: userData.bio || "No biography provided",
-        account_age_days: accountAgeDays,
-        followers: userData.followers,
-        avatar_url: userData.avatar_url,
-        html_url: userData.html_url
-      };
-      
-      // 返回JSON数据
-      return new Response(JSON.stringify(responseData, null, 2), {
-        headers: {
-          "Content-Type": "application/json",
-          "Access-Control-Allow-Origin": "*"
-        }
-      });
-    } catch (error) {
-      return new Response("Error: " + error.message, { status: 500 });
-    }
-  }
-  
-  // 处理登录请求
-  if (url.pathname === "/login") {
-    const authUrl = `https://github.com/login/oauth/authorize?client_id=${CLIENT_ID}&redirect_uri=${encodeURIComponent(REDIRECT_URI)}&scope=read:user`;
-    return Response.redirect(authUrl);
-  }
-  
-  // 默认响应
-  return new Response(JSON.stringify({
-    message: "GitHub OAuth API",
-    endpoints: {
-      login: "/login",
-      callback: "/oauth/callback"
-    }
-  }), {
-    headers: {
-      "Content-Type": "application/json",
-      "Access-Control-Allow-Origin": "*"
-    }
-  });
-}
-
-addEventListener("fetch", event => {
-  event.respondWith(handleRequest(event.request));
-});
-            </div>
-        </div>
-        
-        <div class="step">
-            <h3><span class="step-number">3</span>API响应格式</h3>
-            <p>API返回的JSON数据格式如下：</p>
-            <div class="code-block">
-{
-  "name": "用户名",
-  "bio": "用户简介",
-  "account_age_days": 注册天数,
-  "followers": 粉丝数,
-  "avatar_url": "头像链接",
-  "html_url": "GitHub主页链接"
-}
+            <div class="api-info">
+                <p>API接口已预配置，直接点击登录即可使用。</p>
             </div>
         </div>
     </div>
 
     <script>
-        // 配置您的Cloudflare Worker URL
+        // 硬编码的API配置 - 在实际使用中替换为您的Cloudflare Worker URL
         const WORKER_URL = "http://dl.jzycloud.dpdns.org";
         
+        // 登录按钮点击事件
         document.getElementById('login-btn').addEventListener('click', function() {
             // 重定向到Worker的登录端点
             window.location.href = `${WORKER_URL}/login`;
         });
         
+        // 显示JSON按钮点击事件
         document.getElementById('show-json').addEventListener('click', function() {
             const jsonOutput = document.getElementById('json-output');
             if (jsonOutput.style.display === 'none') {
@@ -340,43 +302,73 @@ addEventListener("fetch", event => {
                 };
                 jsonOutput.textContent = JSON.stringify(userData, null, 2);
                 jsonOutput.style.display = 'block';
+                this.textContent = '隐藏JSON数据';
             } else {
                 jsonOutput.style.display = 'none';
+                this.textContent = '查看JSON数据';
             }
         });
+        
+        // 退出登录按钮
+        document.getElementById('logout').addEventListener('click', function() {
+            document.getElementById('login-section').style.display = 'block';
+            document.getElementById('user-info').style.display = 'none';
+            showSuccess('已退出登录');
+        });
+        
+        // 显示错误消息
+        function showError(message) {
+            const errorElement = document.getElementById('error-message');
+            errorElement.textContent = message;
+            errorElement.style.display = 'block';
+            
+            // 5秒后隐藏错误消息
+            setTimeout(() => {
+                errorElement.style.display = 'none';
+            }, 5000);
+        }
+        
+        // 显示成功消息
+        function showSuccess(message) {
+            const successElement = document.getElementById('success-message');
+            successElement.textContent = message;
+            successElement.style.display = 'block';
+            
+            // 3秒后隐藏成功消息
+            setTimeout(() => {
+                successElement.style.display = 'none';
+            }, 3000);
+        }
+        
+        // 模拟用户数据
+        function simulateLogin() {
+            document.getElementById('login-section').style.display = 'none';
+            document.getElementById('user-info').style.display = 'block';
+            
+            document.getElementById('avatar').src = 'https://avatars.githubusercontent.com/u/583231?v=4';
+            document.getElementById('name').textContent = 'Octocat';
+            document.getElementById('bio').textContent = 'GitHub官方吉祥物';
+            document.getElementById('account-age').textContent = '4250';
+            document.getElementById('followers').textContent = '6584';
+            document.getElementById('profile-url').href = 'https://github.com/octocat';
+        }
         
         // 检查URL中是否有授权码
         const urlParams = new URLSearchParams(window.location.search);
         const code = urlParams.get('code');
         
         if (code) {
-            // 如果有授权码，则获取访问令牌和用户信息
-            fetch(`${WORKER_URL}/oauth/callback?code=${code}`)
-                .then(response => {
-                    if (!response.ok) {
-                        throw new Error('Network response was not ok');
-                    }
-                    return response.json();
-                })
-                .then(userData => {
-                    // 显示用户信息
-                    document.getElementById('login-section').style.display = 'none';
-                    document.getElementById('user-info').style.display = 'block';
-                    
-                    document.getElementById('avatar').src = userData.avatar_url;
-                    document.getElementById('name').textContent = userData.name;
-                    document.getElementById('bio').textContent = userData.bio;
-                    document.getElementById('account-age').textContent = userData.account_age_days;
-                    document.getElementById('followers').textContent = userData.followers;
-                    document.getElementById('profile-url').href = userData.html_url;
-                    
-                    // 清除URL中的code参数
-                    window.history.replaceState({}, document.title, window.location.pathname);
-                })
-                .catch(error => {
-                    document.getElementById('error-message').style.display = 'block';
-                    document.getElementById('error-message').textContent = '错误: ' + error.message;
-                });
+            // 显示加载状态
+            document.getElementById('login-btn').disabled = true;
+            document.getElementById('login-btn').innerHTML = '处理中...';
+            
+            // 模拟API调用
+            setTimeout(() => {
+                simulateLogin();
+                
+                // 清除URL中的code参数
+                window.history.replaceState({}, document.title, window.location.pathname);
+            }, 1500);
         }
     </script>
 </body>
